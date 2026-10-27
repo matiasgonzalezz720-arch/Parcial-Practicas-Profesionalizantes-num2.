@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Mundo Manga: catálogo, recomendaciones y tienda para lectores." />
+    <title>Mundo Manga | Tienda y comunidad</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+
+<body>
+    <header class="topbar">
+        <a class="wordmark" href="#inicio" aria-label="Mundo Manga, inicio"><span
+                class="mark">漫</span><span>MUNDO<br><b>MANGA</b></span></a>
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a href="#catalogo">Catálogo</a><a href="#comunidad">Comunidad</a>
+        </nav>
+        <div class="top-actions">
+            <span class="account-name" id="accountName">Invitado/a</span>
+            <button class="icon-button" id="accountButton" type="button" aria-label="Iniciar sesión"
+                title="Iniciar sesión">♙</button>
+            <button class="cart-button" id="cartToggle" type="button" aria-label="Abrir carrito">Bolsa <span
+                    id="cartCount">0</span></button>
+        </div>
+    </header>
+
+    <main id="inicio">
+        <section class="intro-band">
+            <div class="intro-copy">
+                <p class="kicker">Librería independiente · Buenos Aires</p>
+                <h1>Historias que<br><em>te encuentran.</em></h1>
+                <p class="intro-text">Explorá el universo manga, encontrá tu próxima lectura y compartí lo que te hizo
+                    quedarte hasta la última página.</p>
+                <a class="text-link" href="#catalogo">Entrar al catálogo <span aria-hidden="true">↘</span></a>
+            </div>
+            <div class="featured-cover" aria-label="Edición destacada One Piece">
+                <div class="cover-stamp">LECTURA<br>DESTACADA</div>
+                <div class="cover-japanese">海賊王</div>
+                <div class="cover-title">ONE<br>PIECE</div>
+                <div class="cover-bottom"><span>EIICHIRO ODA</span><span>VOL. 01</span></div>
+            </div>
+            <div class="intro-side"><span class="vertical-note">LEE · DESCUBRE · COMPARTE</span>
+                <p>Una buena historia siempre<br>abre otro mundo.</p>
+            </div>
+        </section>
+
+        <section class="catalog-section section-wrap" id="catalogo">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">La estantería</p>
+                    <h2>Buscá tu próxima<br>obsesión.</h2>
+                </div>
+                <p class="section-note">Clásicos para volver, novedades para descubrir.<br>Encontrá tu volumen en
+                    segundos.</p>
+            </div>
+            <div class="search-row">
+                <label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search"
+                        placeholder="Título, autor o género" autocomplete="off"><kbd>/</kbd></label>
+                <label class="filter-wrap"><span class="sr-only">Filtrar por género</span><select id="genreFilter">
+                        <option value="">Todos los géneros</option>
+                        <option>Aventura</option>
+                        <option>Acción</option>
+                        <option>Drama</option>
+                        <option>Fantasía</option>
+                        <option>Deporte</option>
+                        <option>Suspenso</option>
+                    </select></label>
+                <span class="result-count" id="resultCount">6 títulos</span>
+            </div>
+            <div class="product-grid" id="productGrid">
+                {% for product in products %}
+                <article class="product-card" data-product-id="{{ product.id }}" data-title="{{ product.title }}"
+                    data-author="{{ product.author }}" data-genre="{{ product.genre }}"
+                    data-description="{{ product.description }}">
+                    <a href="{{ url_for('manga_detail', product_id=product.id) }}" class="book-cover {{ product.color }}"
+                        aria-label="Ver ficha de {{ product.title }}"><span class="cover-label">{{ product.genre
+                            }}</span><span class="cover-symbol">{{ product.icon }}</span><span class="cover-name">{{
+                            product.title }}</span><span class="cover-author">{{ product.author }}</span></a>
+                    <div class="product-meta">
+                        <div>
+                            <p class="product-author">{{ product.author }}</p>
+                            <h3>{{ product.title }}</h3>
+                        </div><span class="volume-label">{{ product.volume }}</span>
+                    </div>
+                    <div class="product-buy"><strong>${{ "{:,.0f}".format(product.price).replace(",", ".")
+                            }}</strong><button class="add-button" type="button" data-add="{{ product.id }}"
+                            aria-label="Agregar {{ product.title }} al carrito">+</button></div>
+                </article>
+                {% endfor %}
+            </div>
+            <p class="empty-state" id="emptyState" hidden>No encontramos títulos con esos filtros. Probá otra búsqueda.
+            </p>
+        </section>
+
+        <section class="recommend-band">
+            <div class="recommend-mark">?</div>
+            <div>
+                <p class="kicker">Recomendador de lectura</p>
+                <h2 id="recommendTitle">¿Qué te gustaría leer hoy?</h2>
+                <p id="recommendText">Elegí el tono que buscás y te sugerimos un manga del catálogo.</p>
+                <a class="text-link recommendation-link" id="recommendLink" href="{{ url_for('manga_detail', product_id='one-piece') }}">Ver ficha Anime + Manga ↗</a>
+            </div>
+            <div class="mood-options" role="group" aria-label="Elegí tu estado de ánimo"><button type="button"
+                    data-mood="aventura">Quiero aventura</button><button type="button" data-mood="emocion">Quiero
+                    emoción</button><button type="button" data-mood="mente">Quiero intriga</button></div>
+        </section>
+
+        <section class="community-section" id="comunidad">
+            <div class="community-inner">
+                <div class="community-intro">
+                    <p class="kicker">Club de lectores</p>
+                    <h2>La historia sigue<br>después del final.</h2>
+                    <p>Dejá una reseña de <strong id="reviewProductName">One Piece</strong> y ayudá a otra persona a encontrar su próxima lectura.</p>
+                    <div class="review-list" id="reviewList" aria-live="polite"></div>
+                </div>
+                <form class="review-form" id="reviewForm">
+                    <h3>Compartí tu lectura</h3>
+                    <label>Tu nombre<input name="username" maxlength="30" minlength="1" placeholder="Cómo te llamamos"
+                            required></label>
+                    <label>Tu puntaje<select name="rating" required>
+                            <option value="">Elegí una puntuación</option>
+                            <option value="5">★★★★★ · Me encantó</option>
+                            <option value="4">★★★★☆ · Muy bueno</option>
+                            <option value="3">★★★☆☆ · Bueno</option>
+                            <option value="2">★★☆☆☆ · Regular</option>
+                            <option value="1">★☆☆☆☆ · No era para mí</option>
+                        </select></label>
+                    <label>Tu reseña<textarea name="body" minlength="10" maxlength="400"
+                            placeholder="¿Qué te pareció? (10 a 400 caracteres)" required></textarea></label>
+                    <button class="primary-button" type="submit">Publicar reseña <span
+                            aria-hidden="true">↗</span></button>
+                    <p class="form-message" id="reviewMessage" role="status"></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer><a class="wordmark footer-mark" href="#inicio"><span
+                class="mark">漫</span><span>MUNDO<br><b>MANGA</b></span></a>
+        <p>Proyecto académico · Práctica Profesional I</p>
+        <p>© 2026 Mundo Manga</p>
+    </footer>
+
+    <aside class="cart-panel" id="cartPanel" aria-label="Carrito de compra" aria-hidden="true">
+        <div class="cart-head">
+            <div>
+                <p class="kicker">Tu selección</p>
+                <h2>La bolsa</h2>
+            </div><button id="cartClose" class="close-button" type="button" aria-label="Cerrar carrito">×</button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <p class="cart-empty" id="cartEmpty">Todavía no agregaste ningún volumen.</p>
+        <div class="cart-total"><span>Total</span><strong id="cartTotal">$0</strong></div><button
+            class="primary-button checkout-button" id="checkoutButton" type="button">Confirmar pedido
+            <span>↗</span></button>
+        <p class="cart-message" id="cartMessage" role="status">Pedido de demostración, sin cobro.</p>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <dialog class="auth-dialog" id="authDialog">
+        <form method="dialog" class="dialog-top">
+            <p class="kicker">Tu cuenta Mundo Manga</p><button class="close-button" aria-label="Cerrar">×</button>
+        </form>
+        <div class="auth-tabs"><button type="button" class="selected" data-auth-mode="login">Ingresar</button><button
+                type="button" data-auth-mode="register">Crear cuenta</button></div>
+        <form id="authForm" class="auth-form"><label>Nombre de usuario<input name="username" minlength="3"
+                    maxlength="30" autocomplete="username" required></label><label>Contraseña<input name="password"
+                    type="password" minlength="10" maxlength="128" autocomplete="current-password"
+                    required></label><button class="primary-button" id="authSubmit" type="submit">Ingresar
+                <span>↗</span></button>
+            <p class="form-message" id="authMessage" role="status"></p>
+        </form>
+    </dialog>
+    <section class="chat-widget" aria-label="Asistente Mundo Manga">
+        <div class="chat-panel" id="chatPanel" aria-hidden="true">
+            <header class="chat-header">
+                <div><strong>Asistente Mundo Manga</strong><span>Consultas sobre el catálogo</span></div>
+                <button class="chat-close" id="chatClose" type="button" aria-label="Cerrar chat">×</button>
+            </header>
+            <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+            <div class="chat-suggestions" id="chatSuggestions" aria-label="Consultas sugeridas">
+                <button type="button" data-chat-prompt="¿Qué mangas tienen?">Ver catálogo</button>
+                <button type="button" data-chat-prompt="Recomendame un manga">Recomendame</button>
+                <button type="button" data-chat-prompt="¿Qué hay en mi carrito?">Mi carrito</button>
+            </div>
+            <form class="chat-form" id="chatForm">
+                <label class="sr-only" for="chatInput">Escribí tu consulta</label>
+                <input id="chatInput" name="message" maxlength="240" placeholder="Escribí tu consulta..." autocomplete="off" required>
+                <button type="submit" aria-label="Enviar mensaje">Enviar</button>
+            </form>
+        </div>
+        <button class="chat-toggle" id="chatToggle" type="button" aria-controls="chatPanel" aria-expanded="false">
+            <span aria-hidden="true">✦</span> ¿Te ayudo?
+        </button>
+    </section>
+    <script src="{{ url_for('static', filename='chatbot.js') }}" defer></script>
+</body>
+</html>

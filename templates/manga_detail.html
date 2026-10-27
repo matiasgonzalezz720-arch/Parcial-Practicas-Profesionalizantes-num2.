@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ficha de {{ product.title }}: manga y adaptación anime.">
+    <title>{{ product.title }} | Anime + Manga · Mundo Manga</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='manga_detail.js') }}" defer></script>
+</head>
+<body class="detail-page" data-product-id="{{ product.id }}" data-product-title="{{ product.title }}" data-product-price="{{ product.price }}">
+<header class="topbar">
+    <a class="wordmark" href="/" aria-label="Mundo Manga, volver al catálogo"><span class="mark">漫</span><span>MUNDO<br><b>MANGA</b></span></a>
+    <nav class="main-nav" aria-label="Navegación principal"><a href="/#catalogo">Catálogo</a><a href="#anime">Anime</a><a href="#manga">Manga</a><a href="#comunidad">Comunidad</a></nav>
+    <div class="top-actions"><a class="cart-button" href="/#catalogo" aria-label="Volver al catálogo; artículos en bolsa"><span>Bolsa</span><span id="detailCartCount">0</span></a></div>
+</header>
+
+<main class="detail-main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación"><a href="/#inicio">Inicio</a><span>›</span><a href="/#catalogo">Catálogo</a><span>›</span><span aria-current="page">{{ product.title }}</span></nav>
+
+    <section class="title-detail-hero">
+        <div class="title-poster {{ product.color }}" aria-label="Arte editorial de {{ product.title }}">
+            <span class="poster-genre">{{ product.genre }} · VOL. 01</span>
+            <span class="poster-mark" aria-hidden="true">{{ product.icon }}</span>
+            <strong>{{ product.title }}</strong>
+            <span class="poster-author">{{ product.author }}</span>
+        </div>
+        <div class="title-detail-copy">
+            <p class="kicker">Manga + adaptación anime · {{ product.genre }}</p>
+            <h1>{{ product.title }}</h1>
+            <p class="detail-lede">{{ product.description }}</p>
+            <div class="detail-actions">
+                <button class="primary-button" id="detailAddButton" type="button">Sumar {{ product.volume }} <span id="detailPrice">${{ "{:,.0f}".format(product.price).replace(",", ".") }}</span></button>
+                <button class="secondary-action" id="favoriteButton" type="button" aria-pressed="false">♡ <span>Guardar</span></button>
+                <button class="secondary-action" id="readButton" type="button" aria-pressed="false">✓ <span>Marcar como leído</span></button>
+            </div>
+            <p class="detail-status" id="detailStatus" role="status" aria-live="polite"></p>
+            <p class="detail-volume">Edición disponible: {{ product.volume }} <span>·</span> <strong>{{ product.price|int }}</strong> ARS</p>
+        </div>
+    </section>
+
+    <section class="edition-section" aria-label="Información de la obra">
+        <div class="edition-heading"><div><p class="kicker">Explorá esta historia</p><h2>Una obra, dos formas de vivirla.</h2></div><p>Elegí una pestaña para ver información de la serie animada o del manga original.</p></div>
+        <div class="detail-tabs" role="tablist" aria-label="Anime o manga">
+            <button type="button" id="animeTab" role="tab" aria-selected="true" aria-controls="animePanel" data-tab="anime">Anime</button>
+            <button type="button" id="mangaTab" role="tab" aria-selected="false" aria-controls="mangaPanel" data-tab="manga">Manga</button>
+        </div>
+        <article class="detail-info-panel" id="animePanel" role="tabpanel" aria-labelledby="animeTab">
+            <div class="info-panel-heading"><span class="info-icon" aria-hidden="true">▶</span><div><p class="kicker">Adaptación animada</p><h3>{{ product.title }} · Anime</h3></div></div>
+            <p class="info-description">{{ product.anime_description }}</p>
+            <dl class="facts detail-facts"><div><dt>Estudio</dt><dd>{{ product.anime_studio }}</dd></div><div><dt>Primer estreno</dt><dd>{{ product.anime_year }}</dd></div><div><dt>Género</dt><dd>{{ product.genre }}</dd></div><div><dt>Basado en</dt><dd>Manga de {{ product.author }}</dd></div></dl>
+            <a class="text-link" href="https://www.justwatch.com/ar/buscar?q={{ product.title|urlencode }}" target="_blank" rel="noopener noreferrer">Consultar plataformas disponibles <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="detail-info-panel" id="mangaPanel" role="tabpanel" aria-labelledby="mangaTab" hidden>
+            <div class="info-panel-heading"><span class="info-icon" aria-hidden="true">漫</span><div><p class="kicker">Publicación original</p><h3>{{ product.title }} · Manga</h3></div></div>
+            <p class="info-description">{{ product.description }}</p>
+            <dl class="facts detail-facts"><div><dt>Autor</dt><dd>{{ product.author }}</dd></div><div><dt>Editorial</dt><dd>{{ product.publisher }}</dd></div><div><dt>Comienzo de publicación</dt><dd>{{ product.start_date }}</dd></div><div><dt>Demografía</dt><dd>{{ product.demographic }}</dd></div></dl>
+            <button class="primary-button" type="button" data-add="{{ product.id }}">Sumar {{ product.volume }} <span>${{ "{:,.0f}".format(product.price).replace(",", ".") }}</span></button>
+        </article>
+    </section>
+
+    <section class="detail-community" id="comunidad">
+        <div class="detail-community-intro"><p class="kicker">Comunidad lectora</p><h2>¿Ya conocés {{ product.title }}?</h2><p>Dejá tu reseña y compartí qué te pareció esta historia.</p><div class="review-list" id="detailReviewList" aria-live="polite"></div></div>
+        <form class="review-form" id="detailReviewForm">
+            <h3>Tu opinión</h3>
+            <label>Nombre<input name="username" maxlength="30" minlength="1" placeholder="Cómo te llamamos" required></label>
+            <label>Puntaje<select name="rating" required><option value="">Elegí una puntuación</option><option value="5">★★★★★ · Me encantó</option><option value="4">★★★★☆ · Muy bueno</option><option value="3">★★★☆☆ · Bueno</option><option value="2">★★☆☆☆ · Regular</option><option value="1">★☆☆☆☆ · No era para mí</option></select></label>
+            <label>Reseña<textarea name="body" minlength="10" maxlength="400" placeholder="Escribí una reseña (10 a 400 caracteres)" required></textarea></label>
+            <button class="primary-button" type="submit">Publicar reseña <span aria-hidden="true">↗</span></button>
+            <p class="form-message" id="detailReviewMessage" role="status"></p>
+        </form>
+    </section>
+</main>
+
+<footer><a class="wordmark footer-mark" href="/"><span class="mark">漫</span><span>MUNDO<br><b>MANGA</b></span></a><p>Proyecto académico · Práctica Profesional I</p><p>© 2026 Mundo Manga</p></footer>
+<section class="chat-widget" aria-label="Asistente Mundo Manga">
+    <div class="chat-panel" id="chatPanel" aria-hidden="true">
+        <header class="chat-header">
+            <div><strong>Asistente Mundo Manga</strong><span>Consultas sobre el catálogo</span></div>
+            <button class="chat-close" id="chatClose" type="button" aria-label="Cerrar chat">×</button>
+        </header>
+        <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions"></div>
+        <div class="chat-suggestions" id="chatSuggestions" aria-label="Consultas sugeridas">
+            <button type="button" data-chat-prompt="¿Qué mangas tienen?">Ver catálogo</button>
+            <button type="button" data-chat-prompt="Recomendame un manga">Recomendame</button>
+            <button type="button" data-chat-prompt="¿Qué hay en mi carrito?">Mi carrito</button>
+        </div>
+        <form class="chat-form" id="chatForm">
+            <label class="sr-only" for="chatInput">Escribí tu consulta</label>
+            <input id="chatInput" name="message" maxlength="240" placeholder="Escribí tu consulta..." autocomplete="off" required>
+            <button type="submit" aria-label="Enviar mensaje">Enviar</button>
+        </form>
+    </div>
+    <button class="chat-toggle" id="chatToggle" type="button" aria-controls="chatPanel" aria-expanded="false">
+        <span aria-hidden="true">✦</span> ¿Te ayudo?
+    </button>
+</section>
+<script src="{{ url_for('static', filename='chatbot.js') }}" defer></script>
+</body>
+</html>
